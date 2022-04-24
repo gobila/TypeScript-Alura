@@ -3,7 +3,12 @@ import { Negociacao } from './models/negociacao.js';
 const negociacao = new Negociacao(new Date(), 10, 100);
 const controller = new Negociacaocontroller();
 const form = document.querySelector('.form');
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    controller.adiciona();
-});
+if (form) {
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        controller.adiciona();
+    });
+}
+else {
+    throw Error('Não foi possével inicializar a aplicação. Verifique se o form foi criado');
+}
