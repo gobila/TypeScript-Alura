@@ -9,6 +9,8 @@ import { logarTempoDeExecucao } from "../decorators/logar-tempo-de-execucao.js";
 import { DiasDaSemana } from "../enums/dias-da-semana.js";
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
+import { NegociacoesService } from "../services/negociacoes-service.js";
+import { Imprimir } from "../utils/imprimir.js";
 import { MensagemView } from "../views/mensagem-view.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
 export class Negociacaocontroller {
@@ -16,6 +18,7 @@ export class Negociacaocontroller {
         this.negociacoes = new Negociacoes();
         this.negociacoesView = new NegociacoesView('#negociacoesView');
         this.mensagemView = new MensagemView('#mensagemView');
+        this.negocioacoesService = new NegociacoesService();
         this.negociacoesView.update(this.negociacoes);
     }
     adiciona() {
@@ -24,8 +27,26 @@ export class Negociacaocontroller {
             return this.mensagemView.update('Apenas negociações em dias Úteis são aceitas');
         }
         this.negociacoes.adiciona(negociacao);
+        Imprimir(negociacao, this.negociacoes);
         this.limparFormulario();
         this.atualizaView();
+    }
+    importaDados() {
+        this.negocioacoesService.obterNegociacoes()
+            .then(negociacoesDeHoje => {
+            return negociacoesDeHoje.filter(negociacoesDeHoje => {
+                return !this.negociacoes
+                    .lista()
+                    .some(negociacao => negociacao.ehIgual(negociacoesDeHoje));
+            });
+        })
+            .then(negociacoesDeHoje => {
+            for (let negociacao of negociacoesDeHoje) {
+                this.negociacoes.adiciona(negociacao);
+            }
+            ;
+            this.negociacoesView.update(this.negociacoes);
+        });
     }
     ehDiaUtil(data) {
         return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
@@ -53,3 +74,4 @@ __decorate([
 __decorate([
     logarTempoDeExecucao()
 ], Negociacaocontroller.prototype, "adiciona", null);
+//# sourceMappingURL=negociacao-controller.js.map

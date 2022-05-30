@@ -1,6 +1,8 @@
+import { Modelo } from "../interfaces/modelo.js";
 import { Negociacao } from "./negociacao.js";
 
-export class Negociacoes{
+export class Negociacoes implements Modelo<Negociacoes>{
+
     private negociacoes: Array<Negociacao>= [];
     // alternate
     // private negociacoes: Negociacao[]= [];
@@ -15,6 +17,14 @@ export class Negociacoes{
     // lista(): readonly Negociacao [] {
     //     return [...this.negociacoes];
     // }
+
+    public paraTexto(): string{
+        return JSON.stringify(this.negociacoes, null, 2);
+    }
+
+    ehIgual(objeto: Negociacoes): boolean {
+        return JSON.stringify(this.negociacoes) === JSON.stringify(objeto.lista())
+    }
 }
 
 const negociacoes = new Negociacoes();
